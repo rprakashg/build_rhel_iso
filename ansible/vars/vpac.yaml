@@ -67,6 +67,9 @@ builder_compose_pkgs:
 - pacemaker 
 - fence-agents-all
 - cabextract
+- cephadm
+- ceph-common
+- lvm2
 builder_compose_customizations:
   services:
     enabled: ["cockpit.socket", "firewalld"]
@@ -74,4 +77,4 @@ builder_compose_customizations:
     services:
       enabled: ["http", "https", "ssh", "cockpit"]
       disabled: ["telnet"]
-    ports: ["9090:tcp", "22:tcp"]
+    ports: ["9090:tcp", "22:tcp", "3300:tcp", "6789:tcp", "8443:tcp"]
