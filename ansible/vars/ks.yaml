@@ -1,0 +1,38 @@
+---
+compose_job_id: d88a36d4-2313-4d0e-80d0-5c722a6ad09c
+
+builder_blueprint_name: vpac-rhel-iso
+
+# Kickstart definition for customized install on baremetal hosts
+# Kickstart customizations
+builder_kickstart_pre: |
+  {{ lookup('ansible.builtin.template', 'ks-pre.j2') }}
+
+builder_kickstart_post:
+- systemctl enable --now cloud-init
+- systemctl enable --now cloud-config
+- systemctl enable --now cloud-final
+- systemctl enable --now cockpit.socket
+
+builder_kickstart_options:
+- lang en_US.UTF-8
+- keyboard us
+- timezone America/Los_Angeles --utc
+- text
+- liveimg --url file:///run/install/repo/liveimg.tar.gz
+- zerombr # Clear the MBR/GPT on all detected disks
+- bootloader --location=mbr
+- clearpart --all --initlabel # Clears all partitions on sda and initializes the disk label
+- part /boot --fstype=ext4 --size=4096 # Creates a /boot partition with ext4 filesystem, 4GB size to accomodate multiple kernels
+- part /boot/efi --fstype=efi --size=600
+- part pv.01 --size=1 --grow # Create a physical volume for LVM
+- # Setup LVM
+- volgroup vg_system pv.01
+- logvol / --vgname=vg_system --name=lv_root --fstype=xfs --size=150000
+- logvol /home --vgname=vg_system --name=lv_home --fstype=xfs --size=200000
+- logvol /vms --vgname=vg_system --name=lv_vms --fstype=xfs --size=500000
+- logvol swap --vgname=vg_system --name=lv_swap --recommended
+- network --bootproto=dhcp --activate #auto detect network
+- reboot --eject
+
+...

@@ -1,0 +1,10 @@
+# This playbook configures a RHEL host as imagebuilder server
+---
+- name: Run setup imagebuilder role
+  hosts: imagebuilder
+  gather_facts: yes
+  
+  tasks:
+  - name: Import role
+    ansible.builtin.import_role:
+      name: rprakashg.edgeautomation.setup_imagebuilder

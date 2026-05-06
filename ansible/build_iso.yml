@@ -1,0 +1,11 @@
+---
+# This playbook automates creation of RHEL ISO 
+# for seapath clusters
+- name: Build RHEL ISO playbook
+  hosts: imagebuilder
+  gather_facts: true
+
+  tasks:
+  - name: Execute the `create_image_installer` role
+    ansible.builtin.import_role:
+      name: rprakashg.edgeautomation.create_image_installer

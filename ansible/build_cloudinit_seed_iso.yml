@@ -1,0 +1,13 @@
+---
+# This playbook creates the cloudinit seed iso
+- name: Build cloudinit seed iso playbook
+  hosts: imagebuilder
+  gather_facts: true
+
+  tasks:
+  - name: Load secrets
+    ansible.builtin.include_vars:
+      file: ./vars/secrets.yml
+  - name: Create cloudinit seed iso
+    ansible.builtin.import_role:
+      name: rprakashg.edgeautomation.create_cloudinit_iso

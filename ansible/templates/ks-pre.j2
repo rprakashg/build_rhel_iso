@@ -1,0 +1,40 @@
+MIN_DISKS={{ min_disks }}
+MIN_SIZE_GB={{ min_size_gb }}
+
+VALID_DISKS=()
+
+for dev in /sys/block/*; do
+    disk=$(basename "$dev")
+
+    # skip unwanted devices
+    [[ "$disk" =~ ^(loop|ram|sr|fd) ]] && continue
+
+    # Must be a disk
+    [[ "$(cat "$dev/device/type" 2>/dev/null)" != "0" ]] && continue
+
+    # Skip removable devices
+    if [[ -f "$dev/removable" ]] && [[ "$(cat "$dev/removable")" == "1" ]]; then
+        continue
+    fi
+
+    # Size in GB
+    size_sectors=$(cat "$dev/size")
+    size_gb=$((size_sectors / 2 / 1024 / 1024))
+
+    if (( size_gb >= MIN_SIZE_GB )); then
+        VALID_DISKS+=("$disk")
+    fi
+done
+
+DISK_COUNT=${VALID_DISKS[@]}
+
+echo "Detected disks: ${VALID_DISKS[*]}"
+echo "Disk count: $DISK_COUNT"
+
+if (( DISK_COUNT < MIN_DISKS )); then
+    echo "ERROR: Minimum $MIN_DISKS disks required, found $DISK_COUNT"
+    echo "Disks found: ${VALID_DISKS[*]}"
+    /usr/bin/wall "Installation aborted: insufficient disks"
+    sleep 10
+    exit 1
+fi

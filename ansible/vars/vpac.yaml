@@ -1,0 +1,77 @@
+retries: 100
+delay: 20
+
+min_disks: 4
+min_size_gb: 500
+
+# blueprint details
+builder_blueprint_name: vpac-rhel-iso
+builder_blueprint_description: "Base RHEL 9.7 image used to deploy grid platform for utilities"
+builder_blueprint_distro: "rhel-9"
+builder_compose_pkgs:
+- ansible-core
+- rsync
+- vim
+- syslog-ng
+- linux-firmware
+- audit
+- ca-certificates
+- chrony
+- curl
+- gnupg
+- wget
+- firewalld
+- irqbalance
+- jq
+- lbzip2
+- linuxptp
+- net-tools
+- pcp-system-tools
+- podman
+- cockpit
+- cockpit-machines
+- cockpit-podman
+- cockpit-storaged
+- cockpit-networkmanager
+- cockpit-selinux
+- cockpit-sosreport
+- cloud-init
+- cloud-utils-growpart
+- unzip
+- bzip2
+- zstd
+- mkisofs
+- qemu-kvm
+- libvirt
+- virt-install
+- virt-viewer
+- swtpm
+- swtpm-tools
+- dosfstools
+- edk2-ovmf #uefi firmware for windows 11 install
+- intel-cmt-cat
+- kernel-rt
+- kernel-rt-kvm
+- tuned-profiles-nfv-host
+- realtime-tests
+- dnf-plugins-core
+- python3-dnf-plugin-versionlock #versionlock
+- cryptsetup
+- corosync
+- pacemaker
+- systemd-networkd
+- systemd-resolved
+- systemd-timesyncd
+- bridge-utils
+- pcs 
+- pacemaker 
+- fence-agents-all
+- cabextract
+builder_compose_customizations:
+  services:
+    enabled: ["cockpit.socket", "firewalld"]
+  firewall:
+    services:
+      enabled: ["http", "https", "ssh", "cockpit"]
+      disabled: ["telnet"]
+    ports: ["9090:tcp", "22:tcp"]

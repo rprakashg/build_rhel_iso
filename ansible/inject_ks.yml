@@ -1,0 +1,13 @@
+---
+# This playbook downloads ISO artifact for specified osbuild job
+# and uses the kickstart definition to create a kickstart file 
+# and injects the generated custom kickstart to create a new iso
+# with custom kickstart
+- name: Inject custom kickstart playbook
+  hosts: imagebuilder
+  gather_facts: true
+
+  tasks:
+  - name: Execute the `inject_ks` role
+    ansible.builtin.import_role:
+      name: rprakashg.edgeautomation.inject_ks
