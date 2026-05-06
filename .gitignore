@@ -1,0 +1,6 @@
+# skip the ansible vault file
+./ansible/vars/secrets.yml
+
+# skip the ansible inventory file
+./ansible/inventory
+
